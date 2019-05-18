@@ -4,12 +4,15 @@ import java.io.IOException;
 
 public class WavHeaderReader {
 
+    // == fields ==
     WavHeader header = new WavHeader();
 
+    // == constructors ==
     public WavHeaderReader(WavHeader header) {
         this.header = header;
     }
 
+    // == public methods ==
     public void read() throws IOException {
         DataInputStream file = null;
         header.setDataChunk(null);
@@ -74,12 +77,23 @@ public class WavHeaderReader {
             header.setDataSize(byteArrayToLong(tmpLong));
             System.out.println("DataSize: " + header.getDataSize());
 
+            System.out.println("===== DATA CHUNK =====");
+
+            for (int i = 1; i < 1001; i++) {
+                file.read(tmpInt);
+                int left = byteArrayToInt(tmpInt);
+                file.read(tmpInt);
+                int right = byteArrayToInt(tmpInt);
+                System.out.println("Sample " + i + "\n left channel: " + left + "\n right channel: " + right);
+            }
+
             file.close();
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
+    // == private methods ==
     private int byteArrayToInt(byte[] b) {
         int start = 0;
         int low = b[start] & 0xff;

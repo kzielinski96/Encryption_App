@@ -1,155 +1,3 @@
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//
-//public class WavHeader {
-//
-//    // == private fields ==
-//    private byte[] chunkID = new byte[4];
-//    private int chunkSize;
-//    private byte[] format = new byte[4];
-//    private byte[] subChunk1ID = new byte[4];
-//    private int subChunk1Size;
-//    private short audioFormat;
-//    private short numChannels;
-//    private int sampleRate;
-//    private int byteRate;
-//    private short blockAlign;
-//    private short bitsPerSample;
-//    private byte[] subChunk2ID = new byte[4];
-//    private int subChunk2Size;
-//    private List<Short> dataChunk = new ArrayList<>();
-//
-//    // == pubic methods ==
-//    public byte[] getChunkID() {
-//        return chunkID;
-//    }
-//
-//    public void setChunkID(byte[] chunkID) {
-//        this.chunkID = chunkID;
-//    }
-//
-//    public int getChunkSize() {
-//        return chunkSize;
-//    }
-//
-//    public void setChunkSize(int chunkSize) {
-//        this.chunkSize = chunkSize;
-//    }
-//
-//    public byte[] getFormat() {
-//        return format;
-//    }
-//
-//    public void setFormat(byte[] format) {
-//        this.format = format;
-//    }
-//
-//    public byte[] getSubChunk1ID() {
-//        return subChunk1ID;
-//    }
-//
-//    public void setSubChunk1ID(byte[] subChunk1ID) {
-//        this.subChunk1ID = subChunk1ID;
-//    }
-//
-//    public int getSubChunk1Size() {
-//        return subChunk1Size;
-//    }
-//
-//    public void setSubChunk1Size(int subChunk1Size) {
-//        this.subChunk1Size = subChunk1Size;
-//    }
-//
-//    public short getAudioFormat() {
-//        return audioFormat;
-//    }
-//
-//    public void setAudioFormat(short audioFormat) {
-//        this.audioFormat = audioFormat;
-//    }
-//
-//    public short getNumChannels() {
-//        return numChannels;
-//    }
-//
-//    public void setNumChannels(short numChannels) {
-//        this.numChannels = numChannels;
-//    }
-//
-//    public int getSampleRate() {
-//        return sampleRate;
-//    }
-//
-//    public void setSampleRate(int sampleRate) {
-//        this.sampleRate = sampleRate;
-//    }
-//
-//    public int getByteRate() {
-//        return byteRate;
-//    }
-//
-//    public void setByteRate(int byteRate) {
-//        this.byteRate = byteRate;
-//    }
-//
-//    public short getBlockAlign() {
-//        return blockAlign;
-//    }
-//
-//    public void setBlockAlign(short blockAlign) {
-//        this.blockAlign = blockAlign;
-//    }
-//
-//    public short getBitsPerSample() {
-//        return bitsPerSample;
-//    }
-//
-//    public void setBitsPerSample(short bitsPerSample) {
-//        this.bitsPerSample = bitsPerSample;
-//    }
-//
-//    public byte[] getSubChunk2ID() {
-//        return subChunk2ID;
-//    }
-//
-//    public void setSubChunk2ID(byte[] subChunk2ID) {
-//        this.subChunk2ID = subChunk2ID;
-//    }
-//
-//    public int getSubChunk2Size() {
-//        return subChunk2Size;
-//    }
-//
-//    public void setSubChunk2Size(int subChunk2Size) {
-//        this.subChunk2Size = subChunk2Size;
-//    }
-//
-//    public List<Short> getDataChunk() {
-//        return dataChunk;
-//    }
-//
-//    public void setDataChunk(List<Short> dataChunk) {
-//        this.dataChunk = dataChunk;
-//    }
-//
-//    public String toString(String header) {
-//        return "WavHeader: " + header +"\n" +
-//                "chunkSize=" + this.getChunkSize() +
-//                "\nformat=" + new String(this.getFormat()) +
-//                "\nfmtSubChunk=" + new String(this.getSubChunk1ID()) +
-//                "\nfmtSubChunkSize=" + this.getSubChunk1Size() +
-//                "\naudioFormat=" + this.getAudioFormat() +
-//                "\nnumChannels=" + this.getNumChannels() +
-//                "\nsampleRate=" + this.getSampleRate() +
-//                "\nbyteRate=" + this.getByteRate() +
-//                "\nblockAlign=" + this.getBlockAlign() +
-//                "\nbitsPerSample=" + this.getBitsPerSample() +
-//                "\ndataSubChunk=" + new String(this.getSubChunk2ID()) +
-//                "\ndataSubChunkSize=" + this.getSubChunk2Size() +
-//                "\nwavData= " + this.getDataChunk();
-//    }
-//}
 public class WavHeader {
     private String path;
     private String riffChunkID;
@@ -167,6 +15,15 @@ public class WavHeader {
     private long dataSize;
     public byte[] dataChunk;
 
+    // == constructors ==
+    public WavHeader(String path) {
+        this.path = path;
+    }
+
+    public WavHeader() {
+    }
+
+    // == public methods ==
     public String getPath() {
         return path;
     }
@@ -285,12 +142,5 @@ public class WavHeader {
 
     public void setDataChunk(byte[] dataChunk) {
         this.dataChunk = dataChunk;
-    }
-
-    public WavHeader(String path) {
-        this.path = path;
-    }
-
-    public WavHeader() {
     }
 }
