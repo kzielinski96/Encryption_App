@@ -1,83 +1,122 @@
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 
 public class WavHeaderReader {
 
-    // == private fields ==
-    private static final int HEADER_SIZE = 44;     // size of the wav header
-    private byte[] buf = new byte[HEADER_SIZE];    // buffer containing bytes of the wav header
-    private WavHeader header = new WavHeader();
-    private InputStream inputStream;
+    WavHeader header = new WavHeader();
 
-    // == contructors ==
-    public WavHeaderReader() {}
-
-    public WavHeaderReader (String source) throws IOException {
-        inputStream = new FileInputStream(source);
+    public WavHeaderReader(WavHeader header) {
+        this.header = header;
     }
 
-    public WavHeaderReader (InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
+    public void read() throws IOException {
+        DataInputStream file = null;
+        header.setDataChunk(null);
+        byte[] tmpLong = new byte[4];
+        byte[] tmpInt = new byte[2];
 
-    // == public methods ==
-    public byte[] getBuf() {
-        return buf;
-    }
+        try {
+            file = new DataInputStream(new FileInputStream(header.getPath()));
+            String tmpRiff = "" + (char)file.readByte() + (char)file.readByte() +
+                    (char)file.readByte() + (char)file.readByte();
+            header.setRiffChunkID(tmpRiff);
+            System.out.println("ChunkID: " + header.getRiffChunkID());
 
-    public WavHeader getHeader() {
-        return header;
-    }
+            file.read(tmpLong);
+            header.setRiffChunkSize(byteArrayToLong(tmpLong));
+            System.out.println("ChunkSize: " + header.getRiffChunkSize());
 
-    public InputStream getInputStream() {
-        return inputStream;
-    }
+            String tmpFormatStr = "" + (char)file.readByte() + (char)file.readByte() +
+                    (char)file.readByte() + (char)file.readByte();
+            header.setFormat(tmpFormatStr);
+            System.out.println("Format: " + header.getFormat());
 
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
+            String tmpFmtSubChunkID = "" + (char)file.readByte() + (char)file.readByte() +
+                    (char)file.readByte() + (char)file.readByte();
+            header.setFmtSubChunkID(tmpFmtSubChunkID);
+            System.out.println("FmtSubchunkID: " + header.getFmtSubChunkID());
 
-    public WavHeader read() throws IOException {
-        int res = inputStream.read(buf);
-        if (res != HEADER_SIZE) {
-            throw new IOException("Invalid header !");
+            file.read(tmpLong);
+            header.setFmtSubChunkSize(byteArrayToLong(tmpLong));
+            System.out.println("FmtSubChunkSize: " + header.getFmtSubChunkSize());
+
+            file.read(tmpInt);
+            header.setAudioFormat(byteArrayToInt(tmpInt));
+            System.out.println("AudioFormat: " + header.getAudioFormat());
+
+            file.read(tmpInt);
+            header.setNumChannels(byteArrayToInt(tmpInt));
+            System.out.println("NumChannels: " + header.getNumChannels());
+
+            file.read(tmpLong);
+            header.setSampleRate(byteArrayToLong(tmpLong));
+            System.out.println("SampleRate: " + header.getSampleRate());
+
+            file.read(tmpLong);
+            header.setByteRate(byteArrayToLong(tmpLong));
+            System.out.println("ByteRate: " + header.getByteRate());
+
+            file.read(tmpInt);
+            header.setBlockAlign(byteArrayToInt(tmpInt));
+            System.out.println("BlockAlign: " + header.getBlockAlign());
+
+            file.read(tmpInt);
+            header.setBitsPerSample(byteArrayToInt(tmpInt));
+            System.out.println("BitsPerSample: " + header.getBitsPerSample());
+
+            String tmpDataChunkID = "" + (char)file.readByte() + (char)file.readByte() +
+                    (char)file.readByte() + (char)file.readByte();
+            header.setDataChunkID(tmpDataChunkID);
+            System.out.println("DataChunkID: " + header.getDataChunkID());
+
+            file.read(tmpLong);
+            header.setDataSize(byteArrayToLong(tmpLong));
+            System.out.println("DataSize: " + header.getDataSize());
+
+            file.close();
+        } catch (Exception e) {
+            throw new IOException(e);
         }
-        header.setChunkSize(Arrays.copyOfRange(buf, 0, 4));
-        if (new String(header.getChunkID()).compareTo("RIFF") != 0) {
-            throw new IOException("Illegal format !");
-        }
-        header.setChunkSize(toInt(4, false));
-        header.setFormat(Arrays.copyOfRange(buf, 8, 12));
-        header.setSubChunk1ID(Arrays.copyOfRange(buf, 12, 16));
-        header.setSubChunk1Size(toInt(16, false));
-        header.setAudioFormat(toShort(20, false));
-        header.setNumChannels(toShort(22, false));
-        header.setSampleRate(toInt(24, false));
-        header.setByteRate(toInt(28, false));
-        header.setBlockAlign(toShort(32, false));
-        header.setBitsPerSample(toShort(34, false));
-        header.setSubChunk2ID(Arrays.copyOfRange(buf, 36, 40));
-        header.setSubChunk2Size(toInt(40, false));
-        return header;
     }
 
-    // == private methods ==
-    private int toInt (int start, boolean endian) {
-        int k = (endian) ? 1 : -1;
-        if (!endian) {
-            start += 3;
-        }
-        return (buf[start] << 24) + (buf[start + k * 1] << 16) +
-                (buf[start + k * 2] << 8) + buf[start + k * 3];
+    private int byteArrayToInt(byte[] b) {
+        int start = 0;
+        int low = b[start] & 0xff;
+        int high = b[start+1] & 0xff;
+        return (int)(high << 8 | low);
     }
 
-    private short toShort (int start, boolean endian) {
-        short k = (endian) ? (short) 1 : -1;
-        if (!endian) {
-            start++;
+    private long byteArrayToLong(byte[] b) {
+        int start = 0;
+        int i = 0;
+        int len = 4;
+        int cnt = 0;
+        byte[] tmp = new byte[len];
+        for (i = start; i < (start + len); i++) {
+            tmp[cnt] = b[i];
+            cnt++;
         }
-        return (short) ((buf[start] << 8) + (buf[start + k * 1]));
+        long accum = 0;
+        i = 0;
+        for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 )
+        {
+            accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy;
+            i++;
+        }
+        return accum;
+    }
+
+    private byte[] intToByteArray(int i) {
+        byte[] b = new byte[4];
+        b[0] = (byte) (i & 0xff);
+        b[1] = (byte) ((i >> 8) & 0x000000FF);
+        b[2] = (byte) ((i >> 16) & 0x000000FF);
+        b[3] = (byte) ((i >> 24) & 0x000000FF);
+        return b;
+    }
+
+    private byte[] shortToByteArray (short data) {
+        return new byte[]{(byte)(data & 0xff),(byte)((data >>> 8) & 0xff)};
     }
 }
