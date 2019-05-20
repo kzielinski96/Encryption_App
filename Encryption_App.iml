@@ -7,5 +7,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="JTransforms-3.1-sources" level="application" />
+    <orderEntry type="library" name="jfreechart-1.0.19" level="project" />
+    <orderEntry type="library" name="commons-math3-3.2" level="project" />
+    <orderEntry type="library" name="commons-io-2.6" level="project" />
+    <orderEntry type="library" name="datasets-hja-birdsong-2.1.0" level="project" />
+    <orderEntry type="library" name="javafx-swt" level="application" />
   </component>
 </module>

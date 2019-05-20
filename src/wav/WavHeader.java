@@ -1,3 +1,5 @@
+package wav;
+
 public class WavHeader {
     private String path;
     private String riffChunkID;

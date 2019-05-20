@@ -1,3 +1,10 @@
+package wav;
+
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.transform.DftNormalization;
+import org.apache.commons.math3.transform.FastFourierTransformer;
+import org.apache.commons.math3.transform.TransformType;
+
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,6 +13,18 @@ public class WavHeaderReader {
 
     // == fields ==
     WavHeader header = new WavHeader();
+    FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
+    public double[] dataBytes = new double[1024];
+    public Complex[] freqs;
+
+    public Complex[] getFreqs() {
+        return freqs;
+    }
+
+    public void setFreqs(Complex[] freqs) {
+        this.freqs = freqs;
+    }
+
 
     // == constructors ==
     public WavHeaderReader(WavHeader header) {
@@ -79,13 +98,12 @@ public class WavHeaderReader {
 
             System.out.println("===== DATA CHUNK =====");
 
-            for (int i = 1; i < 1001; i++) {
-                file.read(tmpInt);
-                int left = byteArrayToInt(tmpInt);
-                file.read(tmpInt);
-                int right = byteArrayToInt(tmpInt);
-                System.out.println("Sample " + i + "\n left channel: " + left + "\n right channel: " + right);
+            for (int i = 0; i < dataBytes.length; i++) {
+                file.read(tmpLong);
+                long sample = byteArrayToLong(tmpLong);
+                dataBytes[i] = (double) sample;
             }
+            setFreqs(fastFourierTransformer.transform(dataBytes, TransformType.FORWARD));
 
             file.close();
         } catch (Exception e) {
