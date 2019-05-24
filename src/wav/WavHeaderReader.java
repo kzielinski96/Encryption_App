@@ -1,30 +1,21 @@
 package wav;
 
-import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.apache.commons.math3.transform.TransformType;
+import org.apache.commons.io.IOUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class WavHeaderReader {
 
     // == fields ==
-    WavHeader header = new WavHeader();
-    FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
-    public double[] dataBytes = new double[1024];
-    public Complex[] freqs;
-
-    public Complex[] getFreqs() {
-        return freqs;
-    }
-
-    public void setFreqs(Complex[] freqs) {
-        this.freqs = freqs;
-    }
-
+    WavHeader header;
 
     // == constructors ==
     public WavHeaderReader(WavHeader header) {
@@ -34,7 +25,8 @@ public class WavHeaderReader {
     // == public methods ==
     public void read() throws IOException {
         DataInputStream file = null;
-        header.setDataChunk(null);
+        header.setDataChunkDouble(null);
+
         byte[] tmpLong = new byte[4];
         byte[] tmpInt = new byte[2];
 
@@ -96,19 +88,123 @@ public class WavHeaderReader {
             header.setDataSize(byteArrayToLong(tmpLong));
             System.out.println("DataSize: " + header.getDataSize());
 
-            System.out.println("===== DATA CHUNK =====");
+            double[] data = getDataByteArray();
+            header.setDataChunkDouble(data);
 
-            for (int i = 0; i < dataBytes.length; i++) {
-                file.read(tmpLong);
-                long sample = byteArrayToLong(tmpLong);
-                dataBytes[i] = (double) sample;
-            }
-            setFreqs(fastFourierTransformer.transform(dataBytes, TransformType.FORWARD));
+            getSpectro();
 
             file.close();
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    public double[] getDataByteArray() throws Exception {
+        DataInputStream file = null;
+        byte[] wavFile = null;
+        int totalLength;
+        int newLength;
+        double[] dataMono;
+
+        try {
+            file = new DataInputStream(new FileInputStream(header.getPath()));
+            wavFile = IOUtils.toByteArray(file);
+            byte[] dataRaw = Arrays.copyOfRange(wavFile, 44, wavFile.length);
+            header.setDataChunkBytes(dataRaw);
+            totalLength = dataRaw.length;
+            newLength = totalLength/4;
+            dataMono = new double[newLength];
+
+            for (int i = 0; 4*i+3 < totalLength; i++) {
+                double left = ((dataRaw[4*i+1] & 0xff) << 8) | (dataRaw[4*i] & 0xff);
+                double right = ((dataRaw[4*i+3] & 0xff) << 8) | (dataRaw[4*i+2] & 0xff);
+                dataMono[i] = (left+right)/2.0;
+            }
+        } catch (Exception e) {
+            throw new IOException();
+        }
+        return dataMono;
+    }
+
+    public void getSpectro() throws Exception {
+        try {
+            double rawData[] = getDataByteArray();
+            int length = rawData.length;
+
+            int windowSize = 2048;
+            int overlapFactor = 8;
+            int windowStep = windowSize / overlapFactor;
+
+            double sampleRate = (double) header.getSampleRate();
+            double timeRes = windowSize / sampleRate;
+            double freqRes = sampleRate / windowSize;
+            double highestFreq = sampleRate / 2.0;
+            double lowestFreq = 5.0 * sampleRate / windowSize;
+            double threshold = 1.0;
+
+            int nX = (length - windowSize) / windowStep;
+            int nY = windowSize/2 + 1;
+            double[][] plotData = new double[nX][nY];
+
+            double maxAmp = Double.MIN_VALUE;
+            double minAmp = Double.MAX_VALUE;
+
+            double ampSquare;
+            double[] inputImg = new double[length];
+
+            for (int i = 0; i < nX; i++) {
+                Arrays.fill(inputImg, 0.0);
+                double[] WS_array = FFT.fft(Arrays.copyOfRange(rawData, i * windowStep, i * windowStep + windowSize),
+                        inputImg, true);
+                for (int j = 0; j < nY; j++) {
+                    ampSquare = (WS_array[2 * j] * WS_array[2 * j]) + (WS_array[2 * j + 1] * WS_array[2 * j + 1]);
+                    if (ampSquare == 0.0) {
+                        plotData[i][j] = ampSquare;
+                    } else {
+                        plotData[i][nY-j-1] = 10 * Math.log10(Math.max(ampSquare, threshold));
+                    }
+
+                    if (plotData[i][j] > maxAmp) {
+                        maxAmp = plotData[i][j];
+                    } else if (plotData[i][j] < minAmp) {
+                        minAmp = plotData[i][j];
+                    }
+                }
+            }
+
+            double diff = maxAmp - minAmp;
+            for (int i = 0; i < nX; i++) {
+                for (int j = 0; j < nY; j++) {
+                    plotData[i][j] = (plotData[i][j] - minAmp) / diff;
+                }
+            }
+
+            BufferedImage spectroImg = new BufferedImage(nX, nY, BufferedImage.TYPE_INT_RGB);
+            double ratio;
+            for (int x = 0; x < nX; x++) {
+                for (int y = 0; y < nY; y++) {
+                    ratio = plotData[x][y];
+
+                    Color newColor = getColor(1.0-ratio);
+                    spectroImg.setRGB(x, y, newColor.getRGB());
+                }
+            }
+
+            File outputImg = new File("spectro.png");
+            ImageIO.write(spectroImg, "png", outputImg);
+
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+
+    }
+
+    public static Color getColor(double power) {
+        double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
+        double S = 1.0; // Saturation
+        double B = 1.0; // Brightness
+
+        return Color.getHSBColor((float)H, (float)S, (float)B);
     }
 
     // == private methods ==

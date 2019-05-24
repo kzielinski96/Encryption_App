@@ -1,5 +1,7 @@
 package wav;
 
+import java.util.ArrayList;
+
 public class WavHeader {
     private String path;
     private String riffChunkID;
@@ -15,7 +17,8 @@ public class WavHeader {
     private int bitsPerSample;
     private String dataChunkID;
     private long dataSize;
-    public byte[] dataChunk;
+    public double[] dataChunkDouble;
+    public byte[] dataChunkBytes;
 
     // == constructors ==
     public WavHeader(String path) {
@@ -138,11 +141,19 @@ public class WavHeader {
         this.dataSize = dataSize;
     }
 
-    public byte[] getDataChunk() {
-        return dataChunk;
+    public double[] getDataChunkDouble() {
+        return dataChunkDouble;
     }
 
-    public void setDataChunk(byte[] dataChunk) {
-        this.dataChunk = dataChunk;
+    public void setDataChunkDouble(double[] dataChunkDouble) {
+        this.dataChunkDouble = dataChunkDouble;
+    }
+
+    public byte[] getDataChunkBytes() {
+        return dataChunkBytes;
+    }
+
+    public void setDataChunkBytes(byte[] dataChunkBytes) {
+        this.dataChunkBytes = dataChunkBytes;
     }
 }

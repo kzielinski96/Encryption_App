@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <center>
+      <ImageView fx:id="imageView" BorderPane.alignment="CENTER_RIGHT" />
+   </center>
+   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="170.0" BorderPane.alignment="CENTER" />
+   <bottom>
+      <HBox alignment="BOTTOM_CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="openBtn" text="Open WAV file" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets bottom="20.0" right="15.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button text="Decrypt file" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets bottom="20.0" left="15.0" right="15.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button text="Encrypt file" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets bottom="20.0" left="15.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </bottom>
+   <right>
+      <VBox prefHeight="334.0" prefWidth="136.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets top="20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </right>
+   <left>
+      <VBox prefHeight="324.0" prefWidth="193.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="fileNameLabel" >
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+            <Label fx:id="chunkIdLabel" />
+            <Label fx:id="chunkSizeLabel" />
+            <Label fx:id="formatLabel" />
+            <Label fx:id="subChunk1IdLabel" />
+            <Label fx:id="subChunk1SizeLabel" />
+            <Label fx:id="audioFormatLabel" />
+            <Label fx:id="numChannelsLabel" />
+            <Label fx:id="sampleRateLabel" />
+            <Label fx:id="byteRateLabel" />
+            <Label fx:id="blockAlignLabel" />
+            <Label fx:id="bitsPerSampleLabel" />
+            <Label fx:id="subChunk2IdLabel" />
+            <Label fx:id="subChunk2SizeLabel" />
+         </children>
+         <BorderPane.margin>
+            <Insets left="40.0" top="20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+</BorderPane>

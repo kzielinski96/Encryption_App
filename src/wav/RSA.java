@@ -1,7 +1,6 @@
 package wav;
 
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -55,7 +54,7 @@ public class RSA {
     }
 
     @SuppressWarnings("deprecation")
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         RSA rsa = new RSA();
         DataInputStream in = new DataInputStream(System.in);
         String testString;
@@ -67,5 +66,23 @@ public class RSA {
         byte[] decrypted = rsa.decrypt(encrypted);
         System.out.println("Decrypting Bytes: " + bytesToString(decrypted));
         System.out.println("Decrypted String: " + new String(decrypted));
+        System.out.println(rsa.p);
+        System.out.println(rsa.q);
+
+//        RSA rsa = new RSA();
+//
+//        try {
+//            WavHeader header = new WavHeader("/home/kub/Pulpit/platformy_java/wav samples/Yamaha-V50-Rock-Beat-120bpm.wav");
+//            WavHeaderReader reader = new WavHeaderReader(header);
+//            reader.read();
+//            reader.getDataByteArray();
+//            byte[] toEncrypt = header.getDataChunkBytes();
+//            byte[] encrypted = rsa.encrypt(toEncrypt);
+//            byte[] decrypted = rsa.decrypt(encrypted);
+//            System.out.println("DecrBytes: " + bytesToString(decrypted));
+//            System.out.println("DecrStr: " + new String(decrypted));
+//        } catch (Exception e) {
+//            throw new IOException(e);
+//        }
     }
 }
