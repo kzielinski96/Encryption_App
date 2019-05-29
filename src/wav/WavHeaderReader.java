@@ -6,16 +6,15 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class WavHeaderReader {
 
     // == fields ==
     WavHeader header;
+    RSA rsa;
 
     // == constructors ==
     public WavHeaderReader(WavHeader header) {
@@ -35,65 +34,51 @@ public class WavHeaderReader {
             String tmpRiff = "" + (char)file.readByte() + (char)file.readByte() +
                     (char)file.readByte() + (char)file.readByte();
             header.setRiffChunkID(tmpRiff);
-            System.out.println("ChunkID: " + header.getRiffChunkID());
 
             file.read(tmpLong);
             header.setRiffChunkSize(byteArrayToLong(tmpLong));
-            System.out.println("ChunkSize: " + header.getRiffChunkSize());
 
             String tmpFormatStr = "" + (char)file.readByte() + (char)file.readByte() +
                     (char)file.readByte() + (char)file.readByte();
             header.setFormat(tmpFormatStr);
-            System.out.println("Format: " + header.getFormat());
 
             String tmpFmtSubChunkID = "" + (char)file.readByte() + (char)file.readByte() +
                     (char)file.readByte() + (char)file.readByte();
             header.setFmtSubChunkID(tmpFmtSubChunkID);
-            System.out.println("FmtSubchunkID: " + header.getFmtSubChunkID());
 
             file.read(tmpLong);
             header.setFmtSubChunkSize(byteArrayToLong(tmpLong));
-            System.out.println("FmtSubChunkSize: " + header.getFmtSubChunkSize());
 
             file.read(tmpInt);
             header.setAudioFormat(byteArrayToInt(tmpInt));
-            System.out.println("AudioFormat: " + header.getAudioFormat());
 
             file.read(tmpInt);
             header.setNumChannels(byteArrayToInt(tmpInt));
-            System.out.println("NumChannels: " + header.getNumChannels());
 
             file.read(tmpLong);
             header.setSampleRate(byteArrayToLong(tmpLong));
-            System.out.println("SampleRate: " + header.getSampleRate());
 
             file.read(tmpLong);
             header.setByteRate(byteArrayToLong(tmpLong));
-            System.out.println("ByteRate: " + header.getByteRate());
 
             file.read(tmpInt);
             header.setBlockAlign(byteArrayToInt(tmpInt));
-            System.out.println("BlockAlign: " + header.getBlockAlign());
 
             file.read(tmpInt);
             header.setBitsPerSample(byteArrayToInt(tmpInt));
-            System.out.println("BitsPerSample: " + header.getBitsPerSample());
 
             String tmpDataChunkID = "" + (char)file.readByte() + (char)file.readByte() +
                     (char)file.readByte() + (char)file.readByte();
             header.setDataChunkID(tmpDataChunkID);
-            System.out.println("DataChunkID: " + header.getDataChunkID());
 
             file.read(tmpLong);
             header.setDataSize(byteArrayToLong(tmpLong));
-            System.out.println("DataSize: " + header.getDataSize());
 
             double[] data = getDataByteArray();
             header.setDataChunkDouble(data);
 
-            getSpectro();
-
             file.close();
+            getSpectro();
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -135,11 +120,6 @@ public class WavHeaderReader {
             int overlapFactor = 8;
             int windowStep = windowSize / overlapFactor;
 
-            double sampleRate = (double) header.getSampleRate();
-            double timeRes = windowSize / sampleRate;
-            double freqRes = sampleRate / windowSize;
-            double highestFreq = sampleRate / 2.0;
-            double lowestFreq = 5.0 * sampleRate / windowSize;
             double threshold = 1.0;
 
             int nX = (length - windowSize) / windowStep;
@@ -205,6 +185,51 @@ public class WavHeaderReader {
         double B = 1.0; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
+    }
+
+    public void encryptWav() {
+        rsa = new RSA(256);
+
+        byte[] dataTmp = header.getDataChunkBytes();
+        byte[] key = rsa.generateKeyWithRSA(dataTmp.length);
+        for (int i = 0; i < dataTmp.length; i++) {
+            dataTmp[i]^=key[i];
+        }
+        saveWav("encrypted", dataTmp);
+    }
+
+    public void decryptWav() {
+        rsa = new RSA(256);
+
+        byte[] dataTmp = header.getDataChunkBytes();
+        byte[] key = rsa.generateKeyWithRSA(dataTmp.length);
+        for (int i = 0; i < dataTmp.length; i++) {
+            dataTmp[i]^=key[i];
+            dataTmp[i]^=key[i];
+        }
+        saveWav("decrypted", dataTmp);
+    }
+
+    public void saveWav(String wavName, byte[] dataTmp) {
+        try {
+            DataOutputStream outFile = new DataOutputStream(new FileOutputStream(wavName + ".wav"));
+            outFile.writeBytes(header.getRiffChunkID());
+            outFile.write(intToByteArray((int)header.getRiffChunkSize()), 0, 4);
+            outFile.writeBytes(header.getFormat());
+            outFile.writeBytes(header.getFmtSubChunkID());
+            outFile.write(intToByteArray((int)header.getFmtSubChunkSize()), 0, 4);
+            outFile.write(shortToByteArray((short)header.getAudioFormat()), 0, 2);
+            outFile.write(shortToByteArray((short)header.getNumChannels()), 0, 2);
+            outFile.write(intToByteArray((int)header.getSampleRate()), 0,4);
+            outFile.write(intToByteArray((int)header.getByteRate()), 0, 4);
+            outFile.write(shortToByteArray((short)header.getBlockAlign()), 0, 2);
+            outFile.write(shortToByteArray((short)header.getBitsPerSample()), 0 ,2);
+            outFile.writeBytes(header.getDataChunkID());
+            outFile.write(intToByteArray((int)header.getDataSize()), 0, 4);
+            outFile.write(dataTmp);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     // == private methods ==

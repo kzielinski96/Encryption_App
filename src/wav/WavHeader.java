@@ -1,7 +1,5 @@
 package wav;
 
-import java.util.ArrayList;
-
 public class WavHeader {
     private String path;
     private String riffChunkID;

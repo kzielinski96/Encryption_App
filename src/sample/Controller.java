@@ -30,7 +30,10 @@ public class Controller {
 
     @FXML
     private Button openBtn;
-
+    @FXML
+    private Button encBtn;
+    @FXML
+    private Button decBtn;
     @FXML
     private ImageView imageView = null;
     @FXML
@@ -72,6 +75,7 @@ public class Controller {
                     header = new WavHeader(file.getPath());
                     reader = new WavHeaderReader(header);
                     reader.read();
+//                    reader.encryptWav();
 
                     spectro = new Image(new FileInputStream("/home/kub/Pulpit/platformy_java/Encryption_App/spectro.png"));
                     width = (int)spectro.getWidth();
@@ -110,6 +114,24 @@ public class Controller {
 
                 } catch (IOException e) {
                     System.out.println(e.getMessage());;
+                }
+            }
+        });
+
+        encBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                reader.encryptWav();
+            }
+        });
+
+        decBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    reader.decryptWav();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         });
