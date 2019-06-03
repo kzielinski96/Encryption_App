@@ -1,5 +1,6 @@
 package wav;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -45,6 +46,21 @@ public class RSA {
         }
         System.out.println("Key generated");
         return b;
+    }
+
+    public void encryptWav(String path, String name, byte[] key) throws Exception {
+        try {
+            WavHeader header = new WavHeader(path);
+            WavHeaderReader reader = new WavHeaderReader(header);
+            reader.read();
+            byte[] dataTmp = header.getDataChunkBytes();
+            for (int i = 0; i < dataTmp.length; i++) {
+                dataTmp[i]^=key[i];
+            }
+            reader.saveWav(name, dataTmp);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
 

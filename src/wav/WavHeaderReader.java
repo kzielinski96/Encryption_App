@@ -7,14 +7,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class WavHeaderReader {
 
     // == fields ==
     WavHeader header;
-    RSA rsa;
 
     // == constructors ==
     public WavHeaderReader(WavHeader header) {
@@ -76,9 +74,7 @@ public class WavHeaderReader {
 
             double[] data = getDataByteArray();
             header.setDataChunkDouble(data);
-
             file.close();
-            getSpectro();
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -185,29 +181,6 @@ public class WavHeaderReader {
         double B = 1.0; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
-    }
-
-    public void encryptWav() {
-        rsa = new RSA(256);
-
-        byte[] dataTmp = header.getDataChunkBytes();
-        byte[] key = rsa.generateKeyWithRSA(dataTmp.length);
-        for (int i = 0; i < dataTmp.length; i++) {
-            dataTmp[i]^=key[i];
-        }
-        saveWav("encrypted", dataTmp);
-    }
-
-    public void decryptWav() {
-        rsa = new RSA(256);
-
-        byte[] dataTmp = header.getDataChunkBytes();
-        byte[] key = rsa.generateKeyWithRSA(dataTmp.length);
-        for (int i = 0; i < dataTmp.length; i++) {
-            dataTmp[i]^=key[i];
-            dataTmp[i]^=key[i];
-        }
-        saveWav("decrypted", dataTmp);
     }
 
     public void saveWav(String wavName, byte[] dataTmp) {

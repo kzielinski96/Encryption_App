@@ -9,6 +9,7 @@ import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import wav.RSA;
 import wav.WavHeader;
 import wav.WavHeaderReader;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 public class Controller {
 
     FileChooser fileChooser = new FileChooser();
+    File file;
     WavHeader header;
     WavHeaderReader reader;
     int width;
@@ -27,6 +29,8 @@ public class Controller {
     PixelReader pixelReader;
     PixelWriter pixelWriter;
     Image spectro;
+    RSA rsa = new RSA(256);
+    byte[] key;
 
     @FXML
     private Button openBtn;
@@ -65,17 +69,19 @@ public class Controller {
     @FXML
     Label subChunk2SizeLabel = new Label();
 
-    public void initialize() throws FileNotFoundException, IOException {
+    public void initialize() throws FileNotFoundException, IOException, Exception {
 
         openBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                File file = fileChooser.showOpenDialog(new Stage());
+//                File file = fileChooser.showOpenDialog(new Stage());
+                file = fileChooser.showOpenDialog(new Stage());
                 try {
                     header = new WavHeader(file.getPath());
                     reader = new WavHeaderReader(header);
                     reader.read();
-//                    reader.encryptWav();
+                    reader.getSpectro();
+                    key = rsa.generateKeyWithRSA(header.getDataChunkBytes().length);
 
                     spectro = new Image(new FileInputStream("/home/kub/Pulpit/platformy_java/Encryption_App/spectro.png"));
                     width = (int)spectro.getWidth();
@@ -114,6 +120,8 @@ public class Controller {
 
                 } catch (IOException e) {
                     System.out.println(e.getMessage());;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());;
                 }
             }
         });
@@ -121,7 +129,11 @@ public class Controller {
         encBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                reader.encryptWav();
+                try {
+                    rsa.encryptWav(file.getPath(), "encrypted", key);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         });
 
@@ -129,7 +141,7 @@ public class Controller {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    reader.decryptWav();
+                    rsa.encryptWav("/home/kub/Pulpit/platformy_java/Encryption_App/encrypted.wav", "decrypted", key);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
