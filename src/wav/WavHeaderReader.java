@@ -107,9 +107,19 @@ public class WavHeaderReader {
         return dataMono;
     }
 
+//    public double[] getFromDataByteArray(int length) {
+//        double[] data = new double[length];
+//        double[] dataRaw = header.getDataChunkDouble();
+//        for (int i = 0; i < length; i++) {
+//            data[i] = dataRaw[i];
+//        }
+//        return data;
+//    }
+
     public void getSpectro() throws Exception {
         try {
             double rawData[] = getDataByteArray();
+//            double rawData[] = getFromDataByteArray(1024);
             int length = rawData.length;
 
             int windowSize = 2048;
@@ -225,8 +235,7 @@ public class WavHeaderReader {
         }
         long accum = 0;
         i = 0;
-        for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 )
-        {
+        for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 ) {
             accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy;
             i++;
         }

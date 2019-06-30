@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Encryption_App:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Encryption_App_jar</output-path>
+    <root id="archive" name="Encryption_App.jar">
+      <element id="module-output" name="Encryption_App" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jcommon-1.0.23.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../commons-math3-3.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Pobrane/jfoenix-9.0.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../wszystko/Java Projects/Apps/javafx-sdk-11.0.2/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../datasets-hja-birdsong-2.1.0.jar" path-in-jar="/" />
+      <element id="library" level="application" name="JTransforms-3.1-sources" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../commons-io-2.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

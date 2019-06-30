@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.*;
@@ -83,7 +84,7 @@ public class Controller {
                     reader.getSpectro();
                     key = rsa.generateKeyWithRSA(header.getDataChunkBytes().length);
 
-                    spectro = new Image(new FileInputStream("/home/kub/Pulpit/platformy_java/Encryption_App/spectro.png"));
+                    spectro = new Image(new FileInputStream("/home/kub/Pulpit/emedia/Encryption_App/spectro.png"));
                     width = (int)spectro.getWidth();
                     height = (int)spectro.getHeight();
 
@@ -131,6 +132,11 @@ public class Controller {
             public void handle(ActionEvent actionEvent) {
                 try {
                     rsa.encryptWav(file.getPath(), "encrypted", key);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("File Encrypted!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Congratulations, your file has been encrypted!");
+                    alert.showAndWait();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -141,7 +147,12 @@ public class Controller {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    rsa.encryptWav("/home/kub/Pulpit/platformy_java/Encryption_App/encrypted.wav", "decrypted", key);
+                    rsa.encryptWav("/home/kub/Pulpit/emedia/Encryption_App/encrypted.wav", "decrypted", key);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("File Decrypted!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Congratulations, your file has been decrypted!");
+                    alert.showAndWait();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }

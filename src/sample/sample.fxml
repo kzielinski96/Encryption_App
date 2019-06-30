@@ -8,25 +8,25 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #90a1a1;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <center>
-      <ImageView fx:id="imageView" BorderPane.alignment="CENTER_RIGHT" />
+      <ImageView fx:id="imageView" fitHeight="1.0" fitWidth="1.0" BorderPane.alignment="CENTER_RIGHT" />
    </center>
    <VBox alignment="CENTER" prefHeight="200.0" prefWidth="170.0" BorderPane.alignment="CENTER" />
    <bottom>
       <HBox alignment="BOTTOM_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="openBtn" text="Open WAV file" textAlignment="CENTER">
+            <Button fx:id="openBtn" style="-fx-background-radius: 50;" text="Open WAV file" textAlignment="CENTER">
                <HBox.margin>
                   <Insets bottom="20.0" right="15.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="decBtn" text="Decrypt file" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+            <Button fx:id="decBtn" style="-fx-background-radius: 50;" text="Decrypt file" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets bottom="20.0" left="15.0" right="15.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="encBtn" text="Encrypt file" textAlignment="CENTER">
+            <Button fx:id="encBtn" style="-fx-background-radius: 50;" text="Encrypt file" textAlignment="CENTER">
                <HBox.margin>
                   <Insets bottom="20.0" left="15.0" top="10.0" />
                </HBox.margin>
@@ -35,33 +35,33 @@
       </HBox>
    </bottom>
    <right>
-      <VBox prefHeight="334.0" prefWidth="136.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="324.0" prefWidth="81.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets top="20.0" />
          </BorderPane.margin>
       </VBox>
    </right>
    <left>
-      <VBox prefHeight="324.0" prefWidth="224.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="324.0" prefWidth="253.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="fileNameLabel">
+            <Label fx:id="fileNameLabel" style="-fx-font-weight: bold;">
                <padding>
                   <Insets top="20.0" />
                </padding>
             </Label>
-            <Label fx:id="chunkIdLabel" />
-            <Label fx:id="chunkSizeLabel" />
-            <Label fx:id="formatLabel" />
-            <Label fx:id="subChunk1IdLabel" />
-            <Label fx:id="subChunk1SizeLabel" />
-            <Label fx:id="audioFormatLabel" />
-            <Label fx:id="numChannelsLabel" />
-            <Label fx:id="sampleRateLabel" />
-            <Label fx:id="byteRateLabel" />
-            <Label fx:id="blockAlignLabel" />
-            <Label fx:id="bitsPerSampleLabel" />
-            <Label fx:id="subChunk2IdLabel" />
-            <Label fx:id="subChunk2SizeLabel" />
+            <Label fx:id="chunkIdLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="chunkSizeLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="formatLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="subChunk1IdLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="subChunk1SizeLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="audioFormatLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="numChannelsLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="sampleRateLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="byteRateLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="blockAlignLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="bitsPerSampleLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="subChunk2IdLabel" style="-fx-font-weight: bold;" />
+            <Label fx:id="subChunk2SizeLabel" style="-fx-font-weight: bold;" />
          </children>
          <BorderPane.margin>
             <Insets left="40.0" top="20.0" />

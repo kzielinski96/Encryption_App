@@ -63,8 +63,18 @@ public class RSA {
         }
     }
 
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        try {
+            RSA rsa = new RSA(256);
+            WavHeader header = new WavHeader("/home/kub/Pulpit/platformy_java/wav samples/africa-toto.wav");
+            WavHeaderReader reader = new WavHeaderReader(header);
+            reader.read();
+            byte[] key = rsa.generateKeyWithRSA(header.getDataChunkBytes().length);
+            rsa.encryptWav(header.getPath(), "encrypted-toto", key);
+            rsa.encryptWav("/home/kub/Pulpit/platformy_java/Encryption_App/encrypted-toto.wav", "decrypted-toto", key);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 }
